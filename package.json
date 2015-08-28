@@ -1,0 +1,32 @@
+{
+  "name": "tsconfig-filesglob-to-files",
+  "version": "0.0.1",
+  "description": "Expand filesGlob to files in tsconfig.json",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "node_modules/typescript/bin/tsc -p .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brieb/tsconfig-filesglob-to-files.git"
+  },
+  "keywords": [
+    "tsconfig",
+    "filesGlob"
+  ],
+  "author": "Brie Bunge",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brieb/tsconfig-filesglob-to-files/issues"
+  },
+  "homepage": "https://github.com/brieb/tsconfig-filesglob-to-files#readme",
+  "devDependencies": {
+    "typescript": "^1.5.3"
+  },
+  "dependencies": {
+    "glob": "^5.0.14",
+    "glob-expand": "^0.1.0"
+  }
+}
