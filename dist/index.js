@@ -2,6 +2,9 @@ var fs = require('fs');
 var path = require('path');
 var expand = require('glob-expand');
 var os = require('os');
+var DEFAULT_CONFIG_DIR = '.';
+var DEFAULT_CONFIG = 'tsconfig.json';
+var INDENT = 4;
 function prettyJSON(object, indent) {
     var cache = [];
     var value = JSON.stringify(object, function (key, value) {
@@ -19,9 +22,8 @@ function prettyJSON(object, indent) {
 }
 module.exports = function (options) {
     var cwdPath = options.cwd || process.cwd();
-    var configDir = path.resolve(cwdPath, options.configPath || '.');
-    var projectFile = path.resolve(configDir, 'tsconfig.json');
-    var indent = options.indent || 2;
+    var configDir = path.resolve(cwdPath, options.configPath || DEFAULT_CONFIG_DIR);
+    var projectFile = path.resolve(configDir, DEFAULT_CONFIG);
     var projectSpec = require(projectFile);
     projectSpec.files = projectSpec.files || [];
     projectSpec.filesGlob = projectSpec.filesGlob || [];
@@ -29,7 +31,7 @@ module.exports = function (options) {
         return;
     }
     projectSpec.files = expand({ filter: 'isFile', cwd: cwdPath }, projectSpec.filesGlob);
-    var newProjectFileContents = prettyJSON(projectSpec, indent);
+    var newProjectFileContents = prettyJSON(projectSpec, INDENT);
     var currentProjectFileContents = fs.readFileSync(projectFile, 'utf8');
     if (newProjectFileContents === currentProjectFileContents) {
         return;

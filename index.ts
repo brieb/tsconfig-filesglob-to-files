@@ -14,11 +14,16 @@ interface TypeScriptProjectSpec {
   filesGlob?: string[];
 }
 
+const DEFAULT_CONFIG_DIR: string = '.';
+const DEFAULT_CONFIG: string = 'tsconfig.json';
+// Match atom-typescript indent level
+// https://github.com/TypeStrong/atom-typescript/blob/0071d8466ebfb81b1ff406f0048c56293905b230/dist/main/tsconfig/tsconfig.js#L426
+const INDENT: number = 4;
+
 export = function (options:Options):any {
   var cwdPath = options.cwd || process.cwd();
-  var configDir = path.resolve(cwdPath, options.configPath || '.');
-  var projectFile = path.resolve(configDir, 'tsconfig.json');
-  var indent = options.indent || 2;
+  var configDir = path.resolve(cwdPath, options.configPath || DEFAULT_CONFIG_DIR);
+  var projectFile = path.resolve(configDir, DEFAULT_CONFIG);
 
   var projectSpec:TypeScriptProjectSpec = require(projectFile);
   projectSpec.files = projectSpec.files || [];
@@ -29,7 +34,7 @@ export = function (options:Options):any {
   }
 
   projectSpec.files = expand({ filter: 'isFile', cwd: cwdPath }, projectSpec.filesGlob);
-  var newProjectFileContents = prettyJSON(projectSpec, indent);
+  var newProjectFileContents = prettyJSON(projectSpec, INDENT);
 
   var currentProjectFileContents = fs.readFileSync(projectFile, 'utf8');
   if (newProjectFileContents === currentProjectFileContents) {
