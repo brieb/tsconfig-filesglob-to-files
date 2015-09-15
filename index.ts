@@ -25,7 +25,7 @@ export = function (options:Options):any {
   var configDir = path.resolve(cwdPath, options.configPath || DEFAULT_CONFIG_DIR);
   var projectFile = path.resolve(configDir, DEFAULT_CONFIG);
 
-  var projectSpec:TypeScriptProjectSpec = require(projectFile);
+  var projectSpec:TypeScriptProjectSpec = JSON.parse(fs.readFileSync(projectFile, "utf8"));
   projectSpec.files = projectSpec.files || [];
   projectSpec.filesGlob = projectSpec.filesGlob || [];
 

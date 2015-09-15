@@ -24,7 +24,7 @@ module.exports = function (options) {
     var cwdPath = options.cwd || process.cwd();
     var configDir = path.resolve(cwdPath, options.configPath || DEFAULT_CONFIG_DIR);
     var projectFile = path.resolve(configDir, DEFAULT_CONFIG);
-    var projectSpec = require(projectFile);
+    var projectSpec = JSON.parse(fs.readFileSync(projectFile, "utf8"));
     projectSpec.files = projectSpec.files || [];
     projectSpec.filesGlob = projectSpec.filesGlob || [];
     if (projectSpec.filesGlob.length === 0) {
