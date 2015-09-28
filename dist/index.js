@@ -32,7 +32,10 @@ module.exports = function (options) {
     }
     var files = [];
     projectSpec.filesGlob.forEach(function (curGlob) {
-        files.push.apply(files, glob.sync(curGlob, { cwd: cwdPath, nodir: true }).sort());
+        var curFiles = glob.sync(curGlob, { cwd: cwdPath, nodir: true })
+            .sort()
+            .filter(function (curFile) { return files.indexOf(curFile) === -1; });
+        files.push.apply(files, curFiles);
     });
     projectSpec.files = files;
     var newProjectFileContents = prettyJSON(projectSpec, INDENT);

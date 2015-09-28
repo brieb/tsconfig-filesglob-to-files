@@ -35,7 +35,10 @@ export = function (options:Options):any {
 
   let files: string[] = [];
   projectSpec.filesGlob.forEach(function(curGlob) {
-    files.push.apply(files, glob.sync(curGlob, { cwd: cwdPath, nodir: true }).sort());
+    let curFiles: string[] = glob.sync(curGlob, { cwd: cwdPath, nodir: true })
+      .sort()
+      .filter(curFile => files.indexOf(curFile) === -1);
+    files.push.apply(files, curFiles);
   });
   projectSpec.files = files;
 
