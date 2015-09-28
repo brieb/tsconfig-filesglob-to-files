@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var expand = require('glob-expand');
+var glob = require('glob');
 var os = require('os');
 var DEFAULT_CONFIG_DIR = '.';
 var DEFAULT_CONFIG = 'tsconfig.json';
@@ -30,7 +30,11 @@ module.exports = function (options) {
     if (projectSpec.filesGlob.length === 0) {
         return;
     }
-    projectSpec.files = expand({ filter: 'isFile', cwd: cwdPath }, projectSpec.filesGlob);
+    var files = [];
+    projectSpec.filesGlob.forEach(function (curGlob) {
+        files.push.apply(files, glob.sync(curGlob, { cwd: cwdPath, nodir: true }).sort());
+    });
+    projectSpec.files = files;
     var newProjectFileContents = prettyJSON(projectSpec, INDENT);
     var currentProjectFileContents = fs.readFileSync(projectFile, 'utf8');
     if (newProjectFileContents === currentProjectFileContents) {

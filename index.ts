@@ -1,6 +1,6 @@
 import fs = require('fs');
 import path = require('path');
-import expand = require('glob-expand');
+import glob = require('glob');
 import os = require('os');
 
 interface Options {
@@ -21,11 +21,11 @@ const DEFAULT_CONFIG: string = 'tsconfig.json';
 const INDENT: number = 4;
 
 export = function (options:Options):any {
-  var cwdPath = options.cwd || process.cwd();
-  var configDir = path.resolve(cwdPath, options.configPath || DEFAULT_CONFIG_DIR);
-  var projectFile = path.resolve(configDir, DEFAULT_CONFIG);
+  let cwdPath = options.cwd || process.cwd();
+  let configDir = path.resolve(cwdPath, options.configPath || DEFAULT_CONFIG_DIR);
+  let projectFile = path.resolve(configDir, DEFAULT_CONFIG);
 
-  var projectSpec:TypeScriptProjectSpec = JSON.parse(fs.readFileSync(projectFile, "utf8"));
+  let projectSpec:TypeScriptProjectSpec = JSON.parse(fs.readFileSync(projectFile, "utf8"));
   projectSpec.files = projectSpec.files || [];
   projectSpec.filesGlob = projectSpec.filesGlob || [];
 
@@ -33,10 +33,15 @@ export = function (options:Options):any {
     return;
   }
 
-  projectSpec.files = expand({ filter: 'isFile', cwd: cwdPath }, projectSpec.filesGlob);
-  var newProjectFileContents = prettyJSON(projectSpec, INDENT);
+  let files: string[] = [];
+  projectSpec.filesGlob.forEach(function(curGlob) {
+    files.push.apply(files, glob.sync(curGlob, { cwd: cwdPath, nodir: true }).sort());
+  });
+  projectSpec.files = files;
 
-  var currentProjectFileContents = fs.readFileSync(projectFile, 'utf8');
+  let newProjectFileContents = prettyJSON(projectSpec, INDENT);
+
+  let currentProjectFileContents = fs.readFileSync(projectFile, 'utf8');
   if (newProjectFileContents === currentProjectFileContents) {
     return;
   }
@@ -46,8 +51,8 @@ export = function (options:Options):any {
 
 // Src: https://github.com/TypeStrong/atom-typescript/blob/0071d8466ebfb81b1ff406f0048c56293905b230/lib/main/tsconfig/tsconfig.ts#L680
 function prettyJSON(object:any, indent:number):string {
-  var cache:any[] = [];
-  var value = JSON.stringify(object,
+  let cache:any[] = [];
+  let value = JSON.stringify(object,
     // fixup circular reference
     function (key, value) {
       if (typeof value === 'object' && value !== null) {
