@@ -2,6 +2,7 @@
   "name": "tsconfig-filesglob-to-files",
   "version": "0.0.1",
   "description": "Expand filesGlob to files in tsconfig.json",
+  "private": true,
   "main": "dist/index.js",
   "scripts": {
     "prepublish": "npm run build",
@@ -26,7 +27,7 @@
     "typescript": "^1.5.3"
   },
   "dependencies": {
-    "glob": "^5.0.14",
+    "glob": "^5.0.15",
     "glob-expand": "^0.1.0"
   }
 }
